@@ -5,32 +5,36 @@
 
 :8080 {
 	# pocketbase
-	handle /_ {
+	redir /_ /_/
+	handle /_/* {
 		reverse_proxy localhost:8090
 	}
-	handle /_* {
-		reverse_proxy localhost:8090
-	}
-	handle /api {
-		reverse_proxy localhost:8090
-	}
+
+	redir /api /api/
 	handle /api/* {
 		reverse_proxy localhost:8090
 	}
 
-	handle /dav/* {
-		uri strip_prefix /dav
-		webdav {
+	# Browser Only 
+	redir /browse /browse/
+	handle /browse/* {
+		uri strip_prefix /browse
+		file_server browse {
 			root ./data
 		}
-		file_server browse
 	}
 
-	# webdav
-
-	handle /volume {
-		reverse_proxy localhost:5005
+	# Must connect with finder
+	# !NOTWORK IN BROWSER
+	redir /webdav /webdav/
+	handle /webdav/* {
+		webdav {
+			root ./data
+			prefix /webdav/
+		}
 	}
+
+	redir /volume /volume/
 	handle /volume/* {
 		reverse_proxy localhost:5005
 	}
