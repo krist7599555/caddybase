@@ -1,0 +1,41 @@
+{
+	# Required for any Caddyfile using the WebDAV plugin
+	order webdav before file_server
+}
+
+:8080 {
+	# pocketbase
+	handle /_ {
+		reverse_proxy localhost:8090
+	}
+	handle /_* {
+		reverse_proxy localhost:8090
+	}
+	handle /api {
+		reverse_proxy localhost:8090
+	}
+	handle /api/* {
+		reverse_proxy localhost:8090
+	}
+
+	route /dav/* {
+		rewrite /dav /dav/
+		webdav {
+			root ./data
+			prefix /dav
+		}
+		file_server browse
+	}
+
+	# webdav
+
+	handle /volume {
+		reverse_proxy localhost:5005
+	}
+	handle /volume/* {
+		reverse_proxy localhost:5005
+	}
+
+	# sveltekit
+	reverse_proxy localhost:3000
+}

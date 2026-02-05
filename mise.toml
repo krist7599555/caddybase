@@ -1,0 +1,42 @@
+[tools]
+bun = "1.2"
+"github:caddyserver/caddy" = "2.10.2"
+"github:caddyserver/xcaddy" = { version = "latest" }
+"github:pocketbase/pocketbase" = "0.36.2"
+"github:117503445/GoWebDAV" = "1.11.0"
+"github:DarthSim/hivemind" = "1.1.0"
+"github:pvolok/mprocs" = "latest"
+"github:f1bonacc1/process-compose" = "latest"
+
+[tasks.build-caddy]
+run = "xcaddy build --with github.com/mholt/caddy-webdav --output ./custom-caddy"
+outputs = ["custom-caddy"]
+
+[tasks.caddy]
+run = "./custom-caddy run --config ./Caddyfile"
+# depends = ["build-caddy"]
+
+[tasks.pocketbase]
+run = """
+pocketbase serve \
+  --http 0.0.0.0:8090 \
+  --dir ./data/pb_data \
+  --migrationsDir ./data/pb_migrations \
+  --publicDir ./data/pb_public
+"""
+
+[tasks.webdav]
+run = "gowebdav --port 5005 --dav /volume,$(pwd)/data,krist,krist,false"
+
+[tasks.svelte-dev]
+run = "bun --bun vite dev --port 3000"
+
+[tasks.svelte-prod]
+run = "PORT=3000 bun ./build/index.js"
+
+# This is your "Profile" - it runs the others in parallel
+[tasks.dev]
+depends = ["caddy", "pocketbase", "webdav", "svelte-dev"]
+
+[tasks.prod]
+depends = ["caddy", "pocketbase", "webdav", "svelte-prod"]
