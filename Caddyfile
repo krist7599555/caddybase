@@ -18,11 +18,10 @@
 		reverse_proxy localhost:8090
 	}
 
-	route /dav/* {
-		rewrite /dav /dav/
+	handle /dav/* {
+		uri strip_prefix /dav
 		webdav {
 			root ./data
-			prefix /dav
 		}
 		file_server browse
 	}

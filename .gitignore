@@ -26,3 +26,5 @@ vite.config.ts.timestamp-*
 
 bin/*
 !bin/archive
+data/*
+*.log
