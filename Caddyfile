@@ -1,6 +1,9 @@
 {
-	# Required for any Caddyfile using the WebDAV plugin
 	order webdav before file_server
+	log default {
+		output stdout
+		format console
+	}
 }
 
 :8080 {
@@ -34,11 +37,5 @@
 		}
 	}
 
-	redir /volume /volume/
-	handle /volume/* {
-		reverse_proxy localhost:5005
-	}
-
-	# sveltekit
 	reverse_proxy localhost:3000
 }

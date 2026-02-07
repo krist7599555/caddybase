@@ -1,0 +1,31 @@
+[tools]
+go = "latest"
+"github:caddyserver/xcaddy" = "latest"
+hadolint = "latest"
+
+[tasks.build-caddy]
+sources = []
+outputs = ["bin/caddy-with-webdav*"]
+run = [
+  "GOOS=darwin GOARCH=arm64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.arm64",
+  "GOOS=linux  GOARCH=amd64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.amd64",
+  "cp bin/caddy-with-webdav.$(uname -m) bin/caddy-with-webdav"
+]
+
+[tasks.build-svelte]
+sources = ["src/**/*"]
+outputs = ["build/**/*"]
+run = "bun --bun vite build"
+
+[tasks.build-docker]
+run = [
+  "[ -f bin/caddy-with-webdav ] || mise run build-caddy",
+  "podman build --platform=linux/arm64 -t webdav-mac.arm64 .",
+  "podman build --platform=linux/amd64 -t webdav-mac.amd64 ."
+]
+
+[tasks.run-docker]
+run = "podman run -it -p 8080:8080 webdav-mac.amd64"
+
+[tasks.build-local]
+depends = ["build-caddy", "build-svelte"]

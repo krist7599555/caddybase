@@ -1,8 +1,0 @@
-
-FROM --platform=$TARGETPLATFORM oven/bun:1.2-slim
-WORKDIR /app
-COPY ./Caddyfile ./Caddyfile
-COPY ./bin/archive/caddy_2_10_2_mac_arm64 ./bin/caddy
-RUN apt-get update && apt-get install -y file
-RUN file ./bin/caddy
-CMD ./bin/caddy run --config ./Caddyfile 
