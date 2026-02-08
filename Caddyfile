@@ -23,6 +23,7 @@
 	handle /browse/* {
 		uri strip_prefix /browse
 		file_server browse {
+			# Yahh we serve root, That is evil, You Might need to change this later
 			root ../
 		}
 	}

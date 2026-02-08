@@ -48,6 +48,7 @@
     {#each await Post.list() as post (post.id)}
       <li animate:flip={{ duration: 1000 }} data-post-id={post.id} class="pb-2">
         <div class="bg-base-100 p-4 rounded">
+          <!-- TODO: this might unsafe for inject script -->
           <div class="whitespace-pre-wrap text-xs">{@html post.content}</div>
           <div class="flex mt-2 gap-2">
             <button

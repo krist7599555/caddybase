@@ -3,6 +3,7 @@ bun = "1.2"
 "github:pocketbase/pocketbase" = "0.36.2"
 
 [env]
+# Default for dev
 POCKETBASE_URL = "https://caddybase-1127231159831134265.rcf2.deploys.app"
 
 [tasks.caddy]
@@ -30,7 +31,7 @@ pocketbase serve \
 run = "bun --bun vite dev --port 3000"
 
 [tasks.svelte-prod]
-run = "PORT=3000 bun ./build/index.js"
+run = "POCKETBASE_URL=http://localhost:8090 PORT=3000 bun ./build/index.js"
 
 [tasks.dev]
 depends = ["caddy", "pocketbase-dev", "svelte-dev"]
