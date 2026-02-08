@@ -1,15 +1,18 @@
 [tools]
-go = "latest"
+"go" = "latest"
 "github:caddyserver/xcaddy" = "latest"
-hadolint = "latest"
 
 [tasks.build-caddy]
 sources = []
 outputs = ["bin/caddy-with-webdav*"]
 run = [
-  "GOOS=darwin GOARCH=arm64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.arm64",
-  "GOOS=linux  GOARCH=amd64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.amd64",
-  "cp bin/caddy-with-webdav.$(uname -m) bin/caddy-with-webdav"
+  "GOOS=darwin GOARCH=arm64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.darwin-arm64",
+  "GOOS=linux  GOARCH=amd64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.linux-amd64",
+  """
+    if [[ "$(uname -s)" == 'Darwin' && "$(uname -m)" == 'arm64' ]]; then
+      cp bin/caddy-with-webdav.darwin-arm64 bin/caddy-with-webdav && chmod +x bin/caddy-with-webdav
+    fi
+  """,
 ]
 
 [tasks.build-svelte]
@@ -17,15 +20,33 @@ sources = ["src/**/*"]
 outputs = ["build/**/*"]
 run = "bun --bun vite build"
 
-[tasks.build-docker]
-run = [
-  "[ -f bin/caddy-with-webdav ] || mise run build-caddy",
-  "podman build --platform=linux/arm64 -t webdav-mac.arm64 .",
-  "podman build --platform=linux/amd64 -t webdav-mac.amd64 ."
-]
-
-[tasks.run-docker]
-run = "podman run -it -p 8080:8080 webdav-mac.amd64"
-
 [tasks.build-local]
 depends = ["build-caddy", "build-svelte"]
+
+[tasks.build-docker]
+run = [
+  "[ -f bin/caddy-with-webdav.linux-amd64 ] || mise run build-caddy",
+  "podman build --format docker --platform linux/amd64 -t krist7599555/caddybase:amd64 ."
+]
+
+[tasks.deploy-docker]
+depends = ["build-docker"]
+run = "podman push krist7599555/caddybase:amd64"
+
+[tasks.clean-gen]
+run = """
+rm -rf .svelte-kit
+rm -rf bin
+rm -rf build
+"""
+
+[tasks.run-docker]
+run = """
+podman run -it -p 8080:8080 krist7599555/caddybase:amd64
+"""
+
+[tasks.test-shell]
+run = "podman run -it --rm krist7599555/caddybase:arm64 /bin/bash"
+
+[tasks.test-dir]
+run = "podman run -it --rm krist7599555/caddybase:arm64 sh -c \"find . -maxdepth 2 -not -path '*/.*' && uname -m\""

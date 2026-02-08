@@ -2,16 +2,28 @@
 bun = "1.2"
 "github:pocketbase/pocketbase" = "0.36.2"
 
+[env]
+POCKETBASE_URL = "https://caddybase-1127231159831134265.rcf2.deploys.app"
+
 [tasks.caddy]
 run = "./bin/caddy-with-webdav run --config ./Caddyfile"
 
-[tasks.pocketbase]
+[tasks.pocketbase-dev]
 run = """
 pocketbase serve \
   --http 0.0.0.0:8090 \
   --dir ./data/pb_data \
   --migrationsDir ./data/pb_migrations \
   --publicDir ./data/pb_public
+"""
+
+[tasks.pocketbase-prod]
+run = """
+pocketbase serve \
+  --http 0.0.0.0:8090 \
+  --dir /data/pb_data \
+  --migrationsDir /data/pb_migrations \
+  --publicDir /data/pb_public
 """
 
 [tasks.svelte-dev]
@@ -21,7 +33,7 @@ run = "bun --bun vite dev --port 3000"
 run = "PORT=3000 bun ./build/index.js"
 
 [tasks.dev]
-depends = ["caddy", "pocketbase", "svelte-dev"]
+depends = ["caddy", "pocketbase-dev", "svelte-dev"]
 
 [tasks.prod]
-depends = ["caddy", "pocketbase", "svelte-prod"]
+depends = ["caddy", "pocketbase-prod", "svelte-prod"]

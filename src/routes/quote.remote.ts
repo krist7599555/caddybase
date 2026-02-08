@@ -6,14 +6,14 @@ let quote = {
   text: 'initial quote'
 }
 
-export const getQuote = query(() => {
+export const get = query(() => {
   return quote
 })
 
-export const setQuote = command(pipe(string(), nonEmpty()), (newQuote) => {
+export const set = command(pipe(string(), nonEmpty()), (newQuote) => {
   quote = {
     time: new Date(),
     text: newQuote
   }
-  getQuote().refresh();
+  get().refresh();
 })

@@ -23,7 +23,7 @@
 	handle /browse/* {
 		uri strip_prefix /browse
 		file_server browse {
-			root ./data
+			root ../
 		}
 	}
 
@@ -31,8 +31,11 @@
 	# !NOTWORK IN BROWSER
 	redir /webdav /webdav/
 	handle /webdav/* {
+    basicauth {
+      krist7599555 "$2a$12$coppS8mVF3Hlk5pb7dAePuLSIkg/UXhHOeaZw5pKfv816.pYXBitC"
+    }
 		webdav {
-			root ./data
+			root ../
 			prefix /webdav/
 		}
 	}

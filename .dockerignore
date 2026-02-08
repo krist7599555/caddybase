@@ -22,3 +22,9 @@
 **/values.dev.yaml
 LICENSE
 README.md
+**/data
+**/build
+**/.svelte-kit
+
+mise.local.toml
+bin/caddy-with-webdav
