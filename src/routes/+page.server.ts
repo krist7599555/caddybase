@@ -1,7 +1,7 @@
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad } from "./$types";
 
 export const load = (async () => {
     return {
-        now: new Date()
+        now: new Date(),
     };
 }) satisfies PageServerLoad;

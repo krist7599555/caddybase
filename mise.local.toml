@@ -6,9 +6,9 @@
 sources = []
 outputs = ["bin/caddy-with-webdav*"]
 run = [
-  "GOOS=darwin GOARCH=arm64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.darwin-arm64",
-  "GOOS=linux  GOARCH=amd64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.linux-amd64",
-  """
+    "GOOS=darwin GOARCH=arm64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.darwin-arm64",
+    "GOOS=linux  GOARCH=amd64 xcaddy build --with github.com/mholt/caddy-webdav --output bin/caddy-with-webdav.linux-amd64",
+    """
     if [[ "$(uname -s)" == 'Darwin' && "$(uname -m)" == 'arm64' ]]; then
       cp bin/caddy-with-webdav.darwin-arm64 bin/caddy-with-webdav && chmod +x bin/caddy-with-webdav
     fi
@@ -25,8 +25,8 @@ depends = ["build-caddy", "build-svelte"]
 
 [tasks.build-docker]
 run = [
-  "[ -f bin/caddy-with-webdav.linux-amd64 ] || mise run build-caddy",
-  "podman build --format docker --platform linux/amd64 -t krist7599555/caddybase:amd64 ."
+    "[ -f bin/caddy-with-webdav.linux-amd64 ] || mise run build-caddy",
+    "podman build --format docker --platform linux/amd64 -t krist7599555/caddybase:amd64 .",
 ]
 
 [tasks.deploy-docker]

@@ -1,48 +1,53 @@
 import { command, getRequestEvent, query } from "$app/server";
-import { string } from 'valibot'
-import { Mutex } from 'async-mutex'
+import { string } from "valibot";
+import { Mutex } from "async-mutex";
 
 interface Post {
-  id: string
-  content: string
-  like: number
-  created: string
-  updated: string
+    id: string;
+    content: string;
+    like: number;
+    created: string;
+    updated: string;
 }
 
 const pb = {
-  get posts() {
-    const { locals: { pb } } = getRequestEvent(); 
-    return pb.collection<Post>("posts")
-  }
-}
+    get posts() {
+        const {
+            locals: { pb },
+        } = getRequestEvent();
 
-export const list = query(() => {
-  return pb.posts.getFullList({
-  sort: '-created'
-  })
-})
+        return pb.collection<Post>("posts");
+    },
+};
 
-export const create = command(string(), async (content) => {
-  const post = await pb.posts.create({
-    content: content,
-    like: 0
-  } satisfies Partial<Post>)
-  return post;
-})
+export const list = query(() =>
+    pb.posts.getFullList({
+        sort: "-created",
+    }),
+);
+
+export const create = command(
+    string(), //
+    async (str_content) =>
+        pb.posts.create({
+            content: str_content,
+            like: 0,
+        } satisfies Partial<Post>),
+);
 
 const mutex = new Mutex();
-export const addLike = command(string(), async (postId) => {
-  return await mutex.runExclusive(async () => {
-    let post = await pb.posts.getOne(postId);
-    let newPost = await pb.posts.update<Post>(postId, {
-      like: post.like + 1,
-    } satisfies Partial<Post>)
-    return newPost;
-  });
-})
+export const addLike = command(
+    string(), //
+    async (id) =>
+        mutex.runExclusive(async () => {
+            const post = await pb.posts.getOne(id);
+            return pb.posts.update(id, {
+                like: post.like + 1,
+            });
+        }),
+);
 
-export const _delete = command(string(), async (postId) => {
-  let post = await pb.posts.delete(postId);
-  return post; 
-})
+export const _delete = command(
+    string(), //
+    async (id) => pb.posts.delete(id),
+);
