@@ -53,11 +53,13 @@
           <div class="flex mt-2 gap-2">
             <button
               class="btn btn-xs btn-secondary"
-              onclick={() => handleAddLike(post.id)}>like {post.like}</button
+              onclick={() => handleAddLike(post.id)}
             >
-            <button class="btn btn-xs" onclick={() => handleDelete(post.id)}
-              >delete</button
-            >
+              like {post.like}
+            </button>
+            <button class="btn btn-xs" onclick={() => handleDelete(post.id)}>
+              delete
+            </button>
           </div>
         </div>
       </li>
